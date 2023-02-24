@@ -106,6 +106,7 @@ alarmCreatePeriodic (BREventAlarmContext context,
                      struct timespec expiration,  // first expiration...
                      struct timespec period,      // ...thereafter increment
                      BREventAlarmId identifier) {
+    timespecInc(&expiration, &period);
     return (BREventAlarm) {
         .type = ALARM_PERIODIC,
         .identifier = identifier,
@@ -142,6 +143,7 @@ alarmPeriodUpdate (BREventAlarm *alarm) {
     struct timespec now = getTime();
     if (-1 == timespecCompare(&alarm->expiration, &now)) {
         alarm->expiration = now;
+        timespecInc(&alarm->expiration, &alarm->period);
     }
 }
 
