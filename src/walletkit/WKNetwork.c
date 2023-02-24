@@ -296,7 +296,11 @@ wkNetworkGetConfirmationsUntilFinal (WKNetwork network) {
 extern void
 wkNetworkSetConfirmationsUntilFinal (WKNetwork network,
                                          uint32_t confirmationsUntilFinal) {
-    network->confirmationsUntilFinal = confirmationsUntilFinal;
+    if (confirmationsUntilFinal < 1) {
+        network->confirmationsUntilFinal = 1;
+    } else {
+        network->confirmationsUntilFinal = confirmationsUntilFinal;
+    }
 }
 
 extern WKCurrency
