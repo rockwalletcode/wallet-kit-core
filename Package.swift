@@ -60,7 +60,8 @@ let package = Package(
                 .headerSearchPath("../include"),           // WK
                 .headerSearchPath("."),
                 .headerSearchPath("../vendor"),
-                .headerSearchPath("../vendor/secp256k1")  // To compile vendor/secp256k1/secp256k1.c
+                .headerSearchPath("../vendor/secp256k1"),  // To compile vendor/secp256k1/secp256k1.c
+                .headerSearchPath("../vendor/yajl/include")
             ]
         ),
 
