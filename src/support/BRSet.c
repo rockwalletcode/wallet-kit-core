@@ -351,6 +351,7 @@ void BRSetFreeAll (BRSet *set, void (*itemFree) (void *item)) {
     void *t;
 
     while (i < size) {
+        if (set->table == NULL) break;
         t = set->table[i++];
         if (t) itemFree(t);
     }
