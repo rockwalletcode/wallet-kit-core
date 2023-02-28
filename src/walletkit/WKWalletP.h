@@ -113,6 +113,17 @@ typedef void
 typedef bool
 (*WKWalletIsEqualHandler) (WKWallet wallet1, WKWallet wallet2);
 
+typedef WKTransfer
+(*WKWalletCreateTransferFromScriptHandler) (WKWallet  wallet,
+                                        const char *outputScript,
+                                        WKAmount  amount,
+                                        WKFeeBasis estimatedFeeBasis,
+                                        size_t attributesCount,
+                                        OwnershipKept WKTransferAttribute *attributes,
+                                        WKCurrency currency,
+                                        WKUnit unit,
+                                        WKUnit unitForFee);
+
 typedef struct {
     WKWalletReleaseHandler release;
     WKWalletGetAddressHandler getAddress;
@@ -125,6 +136,7 @@ typedef struct {
     WKWalletGetAddressesForRecoveryHandler getAddressesForRecovery;
     WKWalletAnnounceTransfer announceTransfer; // May be NULL
     WKWalletIsEqualHandler isEqual;
+    WKWalletCreateTransferFromScriptHandler createTransferFromScript;
 } WKWalletHandlers;
 
 

@@ -26,6 +26,7 @@
 #include "support/BRSet.h"
 #include "support/BRAddress.h"
 #include "support/BRArray.h"
+#include "support/util/BRHex.h"
 #include <stdlib.h>
 #include <inttypes.h>
 #include <limits.h>
@@ -602,6 +603,16 @@ int btcWalletAddressIsUsed(BRBitcoinWallet *wallet, const char *addr)
     r = BRSetContains(wallet->usedPKH, &pkh);
     pthread_mutex_unlock(&wallet->lock);
     return r;
+}
+
+BRAddress btcWalletGetAddress(BRBitcoinWallet *wallet, const char *outputScript)
+{
+    size_t bytesCount = 0;
+    uint8_t *outputScriptByteArray = hexDecodeCreate (&bytesCount, outputScript, strlen(outputScript));
+
+    BRAddress addr;
+    BRAddressFromScriptPubKey(addr.s, sizeof(addr), wallet->addrParams, outputScriptByteArray, bytesCount);
+    return addr;
 }
 
 // returns an unsigned transaction that sends the specified amount from the wallet to the given address

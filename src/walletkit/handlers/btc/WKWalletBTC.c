@@ -369,6 +369,40 @@ wkWalletGetAddressesForRecoveryBTC (WKWallet wallet) {
     return addresses;
 }
 
+extern WKTransfer
+wkWalletCreateTransferFromScriptBTC (WKWallet  wallet,
+                               const char *outputScript,
+                               WKAmount  amount,
+                               WKFeeBasis estimatedFeeBasis,
+                               size_t attributesCount,
+                               OwnershipKept WKTransferAttribute *attributes,
+                               WKCurrency currency,
+                               WKUnit unit,
+                               WKUnit unitForFee) {
+    WKWalletBTC walletBTC = wkWalletCoerceBTC(wallet);
+
+    BRBitcoinWallet *wid = walletBTC->wid;
+
+    BRAddress address = btcWalletGetAddress(wid, outputScript);
+
+    WKBoolean overflow = WK_FALSE;
+    uint64_t value = wkAmountGetIntegerRaw (amount, &overflow);
+    if (WK_TRUE == overflow) { return NULL; }
+
+    uint64_t feePerKb = wkFeeBasisAsBTC(estimatedFeeBasis);
+
+    BRBitcoinTransaction *tid = btcWalletCreateTransactionWithFeePerKb (wid, feePerKb, value, address.s);
+
+    return (NULL == tid
+            ? NULL
+            : wkTransferCreateAsBTC (wallet->listenerTransfer,
+                                         unit,
+                                         unitForFee,
+                                         wid,
+                                         tid,
+                                         wallet->type));
+}
+
 WKWalletHandlers wkWalletHandlersBTC = {
     wkWalletReleaseBTC,
     wkWalletGetAddressBTC,
@@ -380,7 +414,8 @@ WKWalletHandlers wkWalletHandlersBTC = {
     wkWalletCreateTransferMultipleBTC,
     wkWalletGetAddressesForRecoveryBTC,
     NULL,
-    wkWalletIsEqualBTC
+    wkWalletIsEqualBTC,
+    wkWalletCreateTransferFromScriptBTC
 };
 
 WKWalletHandlers wkWalletHandlersBCH = {
@@ -394,7 +429,8 @@ WKWalletHandlers wkWalletHandlersBCH = {
     wkWalletCreateTransferMultipleBTC,
     wkWalletGetAddressesForRecoveryBTC,
     NULL,
-    wkWalletIsEqualBTC
+    wkWalletIsEqualBTC,
+    wkWalletCreateTransferFromScriptBTC
 };
 
 WKWalletHandlers wkWalletHandlersBSV = {
@@ -408,7 +444,8 @@ WKWalletHandlers wkWalletHandlersBSV = {
     wkWalletCreateTransferMultipleBTC,
     wkWalletGetAddressesForRecoveryBTC,
     NULL,
-    wkWalletIsEqualBTC
+    wkWalletIsEqualBTC,
+    wkWalletCreateTransferFromScriptBTC
 };
 
 WKWalletHandlers wkWalletHandlersLTC = {
