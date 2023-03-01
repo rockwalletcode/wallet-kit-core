@@ -369,6 +369,19 @@ wkWalletGetAddressesForRecoveryBTC (WKWallet wallet) {
     return addresses;
 }
 
+extern const char *
+wkWalletGetAddressFromScriptBTC (WKWallet  wallet,
+                               const char *outputScript) {
+    WKWalletBTC walletBTC = wkWalletCoerceBTC(wallet);
+
+    BRBitcoinWallet *wid = walletBTC->wid;
+
+    BRAddress address = btcWalletGetAddress(wid, outputScript);
+
+    return strdup(address.s);
+}
+
+
 extern WKTransfer
 wkWalletCreateTransferFromScriptBTC (WKWallet  wallet,
                                const char *outputScript,
@@ -415,6 +428,7 @@ WKWalletHandlers wkWalletHandlersBTC = {
     wkWalletGetAddressesForRecoveryBTC,
     NULL,
     wkWalletIsEqualBTC,
+    wkWalletGetAddressFromScriptBTC,
     wkWalletCreateTransferFromScriptBTC
 };
 
@@ -430,6 +444,7 @@ WKWalletHandlers wkWalletHandlersBCH = {
     wkWalletGetAddressesForRecoveryBTC,
     NULL,
     wkWalletIsEqualBTC,
+    wkWalletGetAddressFromScriptBTC,
     wkWalletCreateTransferFromScriptBTC
 };
 
@@ -445,6 +460,7 @@ WKWalletHandlers wkWalletHandlersBSV = {
     wkWalletGetAddressesForRecoveryBTC,
     NULL,
     wkWalletIsEqualBTC,
+    wkWalletGetAddressFromScriptBTC,
     wkWalletCreateTransferFromScriptBTC
 };
 

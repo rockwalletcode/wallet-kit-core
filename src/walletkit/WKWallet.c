@@ -990,6 +990,13 @@ wkWalletCreateTransfer (WKWallet  wallet,
     return transfer;
 }
 
+extern const char*
+wkWalletGetAddressFromScript(WKWallet  wallet,
+                             const char* outputScript) {
+    return wallet->handlers->getAddressFromScript(wallet,
+                                                  outputScript);
+}
+
 extern WKTransfer
 wkWalletCreateTransferFromScript (WKWallet  wallet,
                             const char* outputScript,
