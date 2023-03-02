@@ -181,8 +181,8 @@ size_t BRBIP32PubKey(uint8_t pubKey[33], BRMasterPubKey mpk, uint32_t chain, uin
     if (pubKey) {
         *(BRECPoint *)pubKey = *(BRECPoint *)mpk.pubKey;
 
-//        _CKDpub((BRECPoint *)pubKey, &chainCode, 0 | BIP32_HARD); // path N(m/44'/0')
-//        _CKDpub((BRECPoint *)pubKey, &chainCode, 0 | BIP32_HARD); // path N(m/44'/0'/0')
+        _CKDpub((BRECPoint *)pubKey, &chainCode, 0 | BIP32_HARD); // path N(m/44'/0')
+        _CKDpub((BRECPoint *)pubKey, &chainCode, 0 | BIP32_HARD); // path N(m/44'/0'/0')
         _CKDpub((BRECPoint *)pubKey, &chainCode, chain); // path N(mpk/chain)
         _CKDpub((BRECPoint *)pubKey, &chainCode, index); // index'th key in chain
         var_clean(&chainCode);
