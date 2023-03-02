@@ -195,7 +195,8 @@ size_t BRBIP32PubKey(uint8_t pubKey[33], BRMasterPubKey mpk, uint32_t chain, uin
 void BRBIP32PrivKey(BRKey *key, const void *seed, size_t seedLen, uint32_t chain, uint32_t index)
 {
 //    BRBIP32PrivKeyPath(key, seed, seedLen, 3, (const uint32_t []){ 0 | BIP32_HARD, chain, index });
-    BRBIP32PrivKeyPath(key, seed, seedLen, 5, (const uint32_t []){ 44 | BIP32_HARD, 0 | BIP32_HARD, 0 | BIP32_HARD, chain, index});
+    BRBIP32PrivKeyPath(key, seed, seedLen, 3, (const uint32_t []){ 44 | BIP32_HARD, chain, index });
+//    BRBIP32PrivKeyPath(key, seed, seedLen, 5, (const uint32_t []){ 44 | BIP32_HARD, 0 | BIP32_HARD, 0 | BIP32_HARD, chain, index});
 }
 
 // sets the private key for the path m/child[0]/child[1]...child[depth - 1]/chain/index to each element in keys
