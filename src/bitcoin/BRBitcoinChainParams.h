@@ -39,7 +39,8 @@ extern "C" {
     
 #define BITCOIN_FORKID      0x00
 #define BITCOIN_BIP32_DEPTH 1
-#define BITCOIN_BIP32_CHILD ((const uint32_t []){ 0 | BIP32_HARD })
+//#define BITCOIN_BIP32_CHILD ((const uint32_t []){ 0 | BIP32_HARD })
+#define BITCOIN_BIP32_CHILD ((const uint32_t []){ 44 | BIP32_HARD })
 
 #define BITCOIN_BIP32_DEPTH_TEST 3
 #define BITCOIN_BIP32_CHILD_TEST ((const uint32_t []){ 44 | BIP32_HARD, 1 | BIP32_HARD, 0 | BIP32_HARD })
