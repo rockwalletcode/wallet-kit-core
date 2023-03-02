@@ -123,7 +123,8 @@ BRMasterPubKey BRBIP32MasterPubKey(const void *seed, size_t seedLen)
         BRKeySetSecret(&key, &secret, 1);
         mpk.fingerPrint = BRKeyHash160(&key).u32[0];
         
-        _CKDpriv(&secret, &chain, 0 | BIP32_HARD); // path m/0H
+//        _CKDpriv(&secret, &chain, 0 | BIP32_HARD); // path m/0H
+        _CKDpriv(&secret, &chain, 44 | BIP32_HARD); // path m/0H
     
         mpk.chainCode = chain;
         BRKeySetSecret(&key, &secret, 1);
@@ -180,6 +181,8 @@ size_t BRBIP32PubKey(uint8_t pubKey[33], BRMasterPubKey mpk, uint32_t chain, uin
     if (pubKey) {
         *(BRECPoint *)pubKey = *(BRECPoint *)mpk.pubKey;
 
+        _CKDpub((BRECPoint *)pubKey, &chainCode, 0 | BIP32_HARD); // path N(m/44'/0')
+        _CKDpub((BRECPoint *)pubKey, &chainCode, 0 | BIP32_HARD); // path N(m/44'/0'/0')
         _CKDpub((BRECPoint *)pubKey, &chainCode, chain); // path N(mpk/chain)
         _CKDpub((BRECPoint *)pubKey, &chainCode, index); // index'th key in chain
         var_clean(&chainCode);
@@ -191,7 +194,8 @@ size_t BRBIP32PubKey(uint8_t pubKey[33], BRMasterPubKey mpk, uint32_t chain, uin
 // sets the private key for path m/0H/chain/index to key
 void BRBIP32PrivKey(BRKey *key, const void *seed, size_t seedLen, uint32_t chain, uint32_t index)
 {
-    BRBIP32PrivKeyPath(key, seed, seedLen, 3, (const uint32_t []){ 0 | BIP32_HARD, chain, index });
+//    BRBIP32PrivKeyPath(key, seed, seedLen, 3, (const uint32_t []){ 0 | BIP32_HARD, chain, index });
+    BRBIP32PrivKeyPath(key, seed, seedLen, 5, (const uint32_t []){ 44 | BIP32_HARD, 0 | BIP32_HARD, 0 | BIP32_HARD, chain, index});
 }
 
 // sets the private key for the path m/child[0]/child[1]...child[depth - 1]/chain/index to each element in keys
@@ -299,7 +303,8 @@ size_t BRBIP32SerializeMasterPrivKey(char str[113], const void *seed, size_t see
 // returns number of bytes written including NULL terminator, maximum is 113
 size_t BRBIP32SerializeMasterPubKey(char str[113], BRMasterPubKey mpk)
 {
-    return _BRBIP32Serialize(str, 1, UInt32GetBE(&mpk.fingerPrint), 0 | BIP32_HARD, mpk.chainCode,
+//    return _BRBIP32Serialize(str, 1, UInt32GetBE(&mpk.fingerPrint), 0 | BIP32_HARD, mpk.chainCode,
+    return _BRBIP32Serialize(str, 1, UInt32GetBE(&mpk.fingerPrint), 44 | BIP32_HARD, mpk.chainCode,
                              mpk.pubKey, sizeof(mpk.pubKey));
 }
 

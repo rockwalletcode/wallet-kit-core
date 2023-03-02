@@ -44,6 +44,9 @@ extern "C" {
 #define BITCOIN_BIP32_DEPTH_TEST 3
 #define BITCOIN_BIP32_CHILD_TEST ((const uint32_t []){ 44 | BIP32_HARD, 1 | BIP32_HARD, 0 | BIP32_HARD })
 
+#define BITCOIN_BIP44_DEPTH 3
+#define BITCOIN_BIP44_CHILD ((const uint32_t []){ 44 | BIP32_HARD, 0 | BIP32_HARD, 0 | BIP32_HARD })
+
 typedef struct {
     uint32_t height;
     UInt256 hash;
