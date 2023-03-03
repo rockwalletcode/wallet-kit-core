@@ -657,8 +657,11 @@ int btcTransactionSign(BRBitcoinTransaction *tx, int forkId, BRKey keys[], size_
         BRBitcoinTxInput *input = &tx->inputs[i];
         const uint8_t *hash = BRScriptPKH(input->script, input->scriptLen);
         
+        UInt160 uIntHash = UInt160Get(hash); // Remove
+        
         j = 0;
-        while (j < keysCount && (! hash || ! UInt160Eq(pkh[j], UInt160Get(hash)))) j++;
+//        while (j < keysCount && (! hash || ! UInt160Eq(pkh[j], UInt160Get(hash)))) j++;
+        while (j < keysCount && (! hash || ! UInt160Eq(pkh[j], uIntHash))) j++;
         if (j >= keysCount) continue;
         
         const uint8_t *elems[BRScriptElements(NULL, 0, input->script, input->scriptLen)];
