@@ -1245,6 +1245,8 @@ wkClientHandleEstimateTransactionFee (OwnershipKept WKWalletManager manager,
         costFactor = costUnitsCalculated;
         status = WK_SUCCESS; // Compute the fee basis to convey fee to user
     }
+    
+    size_t attributKeysCount = attributeKeys == NULL ? 0 : array_count(attributeKeys);
 
     WKFeeBasis feeBasis = NULL;
     if (WK_SUCCESS == status)
@@ -1252,7 +1254,7 @@ wkClientHandleEstimateTransactionFee (OwnershipKept WKWalletManager manager,
                                                                   transfer,
                                                                   networkFee,
                                                                   costFactor,
-                                                                  array_count(attributeKeys),
+                                                                  attributKeysCount,
                                                                   (const char**) attributeKeys,
                                                                   (const char**) attributeVals);
 
@@ -1334,15 +1336,12 @@ extern void
 wkClientAnnounceEstimateTransactionFeeFailure (OwnershipKept WKWalletManager manager,
                                                OwnershipGiven WKClientCallbackState callbackState,
                                                OwnershipGiven WKClientError error) {
-    BRArrayOf(char *) keys;
-    array_new (keys, 0);
-    
     WKClientAnnounceEstimateTransactionFeeEvent event =
     { { NULL, &handleClientAnnounceEstimateTransactionFeeEventType },
         wkWalletManagerTakeWeak(manager),
         callbackState,
         0,
-        keys,
+        NULL,
         NULL,
         error };
 
