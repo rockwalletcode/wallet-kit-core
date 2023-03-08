@@ -1334,12 +1334,15 @@ extern void
 wkClientAnnounceEstimateTransactionFeeFailure (OwnershipKept WKWalletManager manager,
                                                OwnershipGiven WKClientCallbackState callbackState,
                                                OwnershipGiven WKClientError error) {
+    BRArrayOf(char *) keys;
+    array_new (keys, 0);
+    
     WKClientAnnounceEstimateTransactionFeeEvent event =
     { { NULL, &handleClientAnnounceEstimateTransactionFeeEventType },
         wkWalletManagerTakeWeak(manager),
         callbackState,
         0,
-        NULL,
+        keys,
         NULL,
         error };
 
