@@ -1237,6 +1237,14 @@ wkClientHandleEstimateTransactionFee (OwnershipKept WKWalletManager manager,
 
     // Leave a uint64_t?
     double costFactor = (double) costUnits;
+    
+    if (NULL != error && costUnits != 0) {
+        WKBoolean overflow = WK_FALSE;
+        double pricePerCostFactorDouble = wkAmountGetDouble(pricePerCostFactor, manager->wallet->unitForFee, &overflow);
+        double costUnitsCalculated = (double) costUnits * pow(10,-18) / pricePerCostFactorDouble;
+        costFactor = costUnitsCalculated;
+        status = WK_SUCCESS; // Compute the fee basis to convey fee to user
+    }
 
     WKFeeBasis feeBasis = NULL;
     if (WK_SUCCESS == status)
@@ -1331,6 +1339,24 @@ wkClientAnnounceEstimateTransactionFeeFailure (OwnershipKept WKWalletManager man
         wkWalletManagerTakeWeak(manager),
         callbackState,
         0,
+        NULL,
+        NULL,
+        error };
+
+    eventHandlerSignalEvent (manager->handler, (BREvent *) &event);
+
+}
+
+extern void
+wkClientAnnounceEstimateTransactionFeeInsufficientGas (OwnershipKept WKWalletManager manager,
+                                               OwnershipGiven WKClientCallbackState callbackState,
+                                               uint64_t costUnits,
+                                               OwnershipGiven WKClientError error) {
+    WKClientAnnounceEstimateTransactionFeeEvent event =
+    { { NULL, &handleClientAnnounceEstimateTransactionFeeEventType },
+        wkWalletManagerTakeWeak(manager),
+        callbackState,
+        costUnits,
         NULL,
         NULL,
         error };

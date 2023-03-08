@@ -345,6 +345,12 @@ wkClientAnnounceEstimateTransactionFeeFailure (OwnershipKept WKWalletManager cwm
                                                OwnershipGiven WKClientCallbackState callbackState,
                                                WKClientError error);
 
+extern void
+wkClientAnnounceEstimateTransactionFeeInsufficientGas (OwnershipKept WKWalletManager cwm,
+                                               OwnershipGiven WKClientCallbackState callbackState,
+                                               uint64_t costUnits,
+                                               WKClientError error);
+
 // MARK: - Currency
 
 /**
