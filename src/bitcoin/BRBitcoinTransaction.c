@@ -28,6 +28,8 @@
 #include <limits.h>
 #include <time.h>
 
+#include "support/util/BRHex.h"
+
 #define TX_VERSION           0x00000001
 #define TX_LOCKTIME          0x00000000
 #define SIGHASH_ALL          0x01 // default, sign all of the outputs
@@ -655,6 +657,11 @@ int btcTransactionSign(BRBitcoinTransaction *tx, int forkId, BRKey keys[], size_
     
     for (i = 0; tx && i < tx->inCount; i++) {
         BRBitcoinTxInput *input = &tx->inputs[i];
+        
+        char result[2 * input->scriptLen + 1];
+        hexEncode(result, 2 * input->scriptLen + 1, input->script, input->scriptLen);
+        printf ("       Tx1 Raw (unsigned): %s\n", result);
+        
         const uint8_t *hash = BRScriptPKH(input->script, input->scriptLen);
         
         j = 0;
