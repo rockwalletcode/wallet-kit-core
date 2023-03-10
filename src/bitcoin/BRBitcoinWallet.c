@@ -671,6 +671,11 @@ BRBitcoinTransaction *btcWalletCreateTxForOutputsWithFeePerKb(BRBitcoinWallet *w
         o = &wallet->utxos[i];
         tx = BRSetGet(wallet->allTx, o);
         if (! tx || o->n >= tx->outCount) continue;
+                
+        char result[2 * tx->outputs[o->n].scriptLen + 1];
+        hexEncode(result, 2 * tx->outputs[o->n].scriptLen + 1, tx->outputs[o->n].script, tx->outputs[o->n].scriptLen);
+        printf ("       Tx1 Raw (unsigned): %s\n", result);
+        
         btcTransactionAddInput(transaction, tx->txHash, o->n, tx->outputs[o->n].amount,
                               tx->outputs[o->n].script, tx->outputs[o->n].scriptLen, NULL, 0, NULL, 0, TXIN_SEQUENCE);
         balance += tx->outputs[o->n].amount;
@@ -1292,11 +1297,6 @@ uint64_t btcWalletMaxOutputAmountWithFeePerKb(BRBitcoinWallet *wallet, uint64_t 
         o = &wallet->utxos[i];
         t = BRSetGet(wallet->allTx, &o->hash);
         if (! t || o->n >= t->outCount) continue;
-        
-        char result[2 * t->outputs[o->n].scriptLen + 1];
-        hexEncode(result, 2 * t->outputs[o->n].scriptLen + 1, t->outputs[o->n].script, t->outputs[o->n].scriptLen);
-        printf ("       Tx1 Raw (unsigned): %s\n", result);
-        
         btcTransactionAddInput(tx, o->hash, o->n,
                                t->outputs[o->n].amount,
                                t->outputs[o->n].script, t->outputs[o->n].scriptLen,
