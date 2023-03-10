@@ -106,6 +106,9 @@ int btcWalletContainsAddress(BRBitcoinWallet *wallet, const char *addr);
 // true if the address was previously used as an input or output in any wallet transaction
 int btcWalletAddressIsUsed(BRBitcoinWallet *wallet, const char *addr);
 
+// gets address from a P2PKH output script
+BRAddress btcWalletGetAddress(BRBitcoinWallet *wallet, const char *outputScript);
+
 // writes transactions registered in the wallet, sorted by date, oldest first, to the given transactions array
 // returns the number of transactions written, or total number available if transactions is NULL
 size_t btcWalletTransactions(BRBitcoinWallet *wallet, BRBitcoinTransaction *transactions[], size_t txCount);

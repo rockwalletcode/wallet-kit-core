@@ -990,6 +990,57 @@ wkWalletCreateTransfer (WKWallet  wallet,
     return transfer;
 }
 
+extern void
+wkWalletGetAddressFromScript(WKWallet  wallet,
+                             const char* outputScript,
+                             char* addressBuffer,
+                             size_t addressBufferSize) {
+    
+    const char* address = wallet->handlers->getAddressFromScript(wallet,
+                                                                 outputScript);
+    
+    snprintf(addressBuffer, addressBufferSize, "%s", address);
+    
+    return;
+}
+
+extern WKTransfer
+wkWalletCreateTransferFromScript (WKWallet  wallet,
+                            const char* outputScript,
+                            WKAmount  amount,
+                            WKFeeBasis estimatedFeeBasis,
+                            size_t attributesCount,
+                            OwnershipKept WKTransferAttribute *attributes,
+                            const char* exchangeId) {
+    WKUnit unit       = wkWalletGetUnit (wallet);
+    WKUnit unitForFee = wkWalletGetUnitForFee(wallet);
+
+    WKCurrency currency = wkUnitGetCurrency(unit);
+    assert (wkAmountHasCurrency (amount, currency));
+
+    WKTransfer transfer = wallet->handlers->createTransferFromScript (wallet,
+                                                                  outputScript,
+                                                                  amount,
+                                                                  estimatedFeeBasis,
+                                                                  attributesCount,
+                                                                  attributes,
+                                                                  currency,
+                                                                  unit,
+                                                                  unitForFee);
+
+    if (NULL != transfer && attributesCount > 0)
+        wkTransferSetAttributes (transfer, attributesCount, attributes);
+
+    if (NULL != transfer && NULL != exchangeId)
+        wkTransferSetExchangeId (transfer, exchangeId);
+
+    wkCurrencyGive(currency);
+    wkUnitGive (unitForFee);
+    wkUnitGive (unit);
+
+    return transfer;
+}
+
 extern WKTransfer
 wkWalletCreateTransferForPaymentProtocolRequest (WKWallet wallet,
                                                      WKPaymentProtocolRequest request,

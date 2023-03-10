@@ -228,6 +228,21 @@ wkWalletCreateTransfer (WKWallet wallet,
                         OwnershipKept WKTransferAttribute *attributes,
                         const char* exchangeId);
 
+extern void
+wkWalletGetAddressFromScript(WKWallet wallet,
+                             const char* outputScript,
+                             char* addressBuffer,
+                             size_t addressBufferSize);
+
+extern WKTransfer
+wkWalletCreateTransferFromScript (WKWallet wallet,
+                        const char* outputScript,
+                        WKAmount amount,
+                        WKFeeBasis estimatedFeeBasis,
+                        size_t attributesCount,
+                        OwnershipKept WKTransferAttribute *attributes,
+                        const char* exchangeId);
+
 extern WKTransfer
 wkWalletCreateTransferForPaymentProtocolRequest (WKWallet wallet,
                                                  WKPaymentProtocolRequest request,
