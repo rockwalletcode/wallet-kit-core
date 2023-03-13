@@ -217,6 +217,16 @@ DEFINE_CURRENCY ("ethereum-mainnet",    "ethereum-mainnet:0xE41d2489571d32218924
 DEFINE_UNIT ("ethereum-mainnet:0xE41d2489571d322189246DaFA5ebDe1F4699F498",      "0x Int",             "zrxi",       0,     "ZRXI")
 DEFINE_UNIT ("ethereum-mainnet:0xE41d2489571d322189246DaFA5ebDe1F4699F498",      "0x",             "zrx",       18,     "ZRX")
 
+// BRD
+DEFINE_CURRENCY ("ethereum-mainnet",    "ethereum-mainnet:0x558ec3152e2eb2174905cd19aea4e34a23de9ad6",  "BRD Token",    "brd",  "erc20",   "0x558ec3152e2eb2174905cd19aea4e34a23de9ad6",   true)
+DEFINE_UNIT ("ethereum-mainnet:0x558ec3152e2eb2174905cd19aea4e34a23de9ad6",      "BRD Token Int",             "brdi",       0,     "BRDI")
+DEFINE_UNIT ("ethereum-mainnet:0x558ec3152e2eb2174905cd19aea4e34a23de9ad6",      "BRD Token",             "brd",       18,     "BRD")
+
+// USDC
+DEFINE_CURRENCY ("ethereum-mainnet",    "ethereum-mainnet:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",  "USD Coin",    "usdc",  "erc20",   "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",   true)
+DEFINE_UNIT ("ethereum-mainnet:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",      "USD Coin Int",             "usdci",       0,     "USDCI")
+DEFINE_UNIT ("ethereum-mainnet:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",      "USD Coin",             "usdc",       6,     "USDC")
+
 DEFINE_ADDRESS_SCHEMES  ("ethereum-mainnet", WK_ADDRESS_SCHEME_NATIVE)
 DEFINE_MODES            ("ethereum-mainnet", WK_SYNC_MODE_API_ONLY)
 
