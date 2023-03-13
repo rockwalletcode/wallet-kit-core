@@ -183,10 +183,10 @@ DEFINE_CURRENCY ("ethereum-mainnet",     "ethereum-mainnet:__native__",   NETWOR
     DEFINE_UNIT ("ethereum-mainnet:__native__",      "Wei",         "wei",      0,      "WEI")
     DEFINE_UNIT ("ethereum-mainnet:__native__",      "Gwei",        "gwei",     9,      "GWEI")
     DEFINE_UNIT ("ethereum-mainnet:__native__",      "Ether",       "eth",     18,      "Ξ")
-
 DEFINE_CURRENCY ("ethereum-mainnet",    "ethereum-mainnet:0x558ec3152e2eb2174905cd19aea4e34a23de9ad6",  "BRD Token",    "brd",  "erc20",   "0x558ec3152e2eb2174905cd19aea4e34a23de9ad6",   true)
     DEFINE_UNIT ("ethereum-mainnet:0x558ec3152e2eb2174905cd19aea4e34a23de9ad6",      "BRD Token INT",         "brdi",      0,      "BRDI")
     DEFINE_UNIT ("ethereum-mainnet:0x558ec3152e2eb2174905cd19aea4e34a23de9ad6",      "BRD Token",             "brd",       18,     "BRD")
+
 // Tether USD
 DEFINE_CURRENCY ("ethereum-mainnet",    "ethereum-mainnet:0xdac17f958d2ee523a2206206994597c13d831ec7",  "Tether USD",    "usdt",  "erc20",   "0xdac17f958d2ee523a2206206994597c13d831ec7",   true)
 DEFINE_UNIT ("ethereum-mainnet:0xdac17f958d2ee523a2206206994597c13d831ec7",      "Tether USD Int",             "usdti",       0,     "USDTI")
