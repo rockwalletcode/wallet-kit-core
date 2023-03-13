@@ -186,6 +186,47 @@ DEFINE_CURRENCY ("ethereum-mainnet",     "ethereum-mainnet:__native__",   NETWOR
 DEFINE_CURRENCY ("ethereum-mainnet",    "ethereum-mainnet:0x558ec3152e2eb2174905cd19aea4e34a23de9ad6",  "BRD Token",    "brd",  "erc20",   "0x558ec3152e2eb2174905cd19aea4e34a23de9ad6",   true)
     DEFINE_UNIT ("ethereum-mainnet:0x558ec3152e2eb2174905cd19aea4e34a23de9ad6",      "BRD Token INT",         "brdi",      0,      "BRDI")
     DEFINE_UNIT ("ethereum-mainnet:0x558ec3152e2eb2174905cd19aea4e34a23de9ad6",      "BRD Token",             "brd",       18,     "BRD")
+
+// Tether USD
+DEFINE_CURRENCY ("ethereum-mainnet",    "ethereum-mainnet:0xdac17f958d2ee523a2206206994597c13d831ec7",  "Tether USD",    "usdt",  "erc20",   "0xdac17f958d2ee523a2206206994597c13d831ec7",   true)
+DEFINE_UNIT ("ethereum-mainnet:0xdac17f958d2ee523a2206206994597c13d831ec7",      "Tether USD Int",             "usdti",       0,     "USDTI")
+DEFINE_UNIT ("ethereum-mainnet:0xdac17f958d2ee523a2206206994597c13d831ec7",      "Tether USD",             "usdt",       6,     "USDT")
+
+// Shiba Inu
+DEFINE_CURRENCY ("ethereum-mainnet",    "ethereum-mainnet:0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE",  "Shiba Inu",    "shib",  "erc20",   "0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE",   true)
+DEFINE_UNIT ("ethereum-mainnet:0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE",      "Shiba Inu Int",             "shibi",       0,     "SHIBI")
+DEFINE_UNIT ("ethereum-mainnet:0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE",      "Shiba Inu",             "shib",       18,     "SHIB")
+
+// Basic Attention
+DEFINE_CURRENCY ("ethereum-mainnet",    "ethereum-mainnet:0x0D8775F648430679A709E98d2b0Cb6250d2887EF",  "Basic Attention",    "bat",  "erc20",   "0x0D8775F648430679A709E98d2b0Cb6250d2887EF",   true)
+DEFINE_UNIT ("ethereum-mainnet:0x0D8775F648430679A709E98d2b0Cb6250d2887EF",      "Basic Attention Int",             "bati",       0,     "BATI")
+DEFINE_UNIT ("ethereum-mainnet:0x0D8775F648430679A709E98d2b0Cb6250d2887EF",      "Basic Attention",             "bat",       18,     "BAT")
+
+// ChainLink
+DEFINE_CURRENCY ("ethereum-mainnet",    "ethereum-mainnet:0x514910771af9ca656af840dff83e8264ecf986ca",  "ChainLink",    "link",  "erc20",   "0x514910771af9ca656af840dff83e8264ecf986ca",   true)
+DEFINE_UNIT ("ethereum-mainnet:0x514910771af9ca656af840dff83e8264ecf986ca",      "ChainLink Int",             "linki",       0,     "LINKI")
+DEFINE_UNIT ("ethereum-mainnet:0x514910771af9ca656af840dff83e8264ecf986ca",      "ChainLink",             "link",       18,     "LINK")
+
+// Loopring
+DEFINE_CURRENCY ("ethereum-mainnet",    "ethereum-mainnet:0xbbbbca6a901c926f240b89eacb641d8aec7aeafd",  "Loopring",    "lrc",  "erc20",   "0xbbbbca6a901c926f240b89eacb641d8aec7aeafd",   true)
+DEFINE_UNIT ("ethereum-mainnet:0xbbbbca6a901c926f240b89eacb641d8aec7aeafd",      "Loopring Int",             "lrci",       0,     "LRCI")
+DEFINE_UNIT ("ethereum-mainnet:0xbbbbca6a901c926f240b89eacb641d8aec7aeafd",      "Loopring",             "lrc",       18,     "LRC")
+
+// 0x
+DEFINE_CURRENCY ("ethereum-mainnet",    "ethereum-mainnet:0xE41d2489571d322189246DaFA5ebDe1F4699F498",  "0x",    "zrx",  "erc20",   "0xE41d2489571d322189246DaFA5ebDe1F4699F498",   true)
+DEFINE_UNIT ("ethereum-mainnet:0xE41d2489571d322189246DaFA5ebDe1F4699F498",      "0x Int",             "zrxi",       0,     "ZRXI")
+DEFINE_UNIT ("ethereum-mainnet:0xE41d2489571d322189246DaFA5ebDe1F4699F498",      "0x",             "zrx",       18,     "ZRX")
+
+// BRD
+DEFINE_CURRENCY ("ethereum-mainnet",    "ethereum-mainnet:0x558ec3152e2eb2174905cd19aea4e34a23de9ad6",  "BRD Token",    "brd",  "erc20",   "0x558ec3152e2eb2174905cd19aea4e34a23de9ad6",   true)
+DEFINE_UNIT ("ethereum-mainnet:0x558ec3152e2eb2174905cd19aea4e34a23de9ad6",      "BRD Token Int",             "brdi",       0,     "BRDI")
+DEFINE_UNIT ("ethereum-mainnet:0x558ec3152e2eb2174905cd19aea4e34a23de9ad6",      "BRD Token",             "brd",       18,     "BRD")
+
+// USDC
+DEFINE_CURRENCY ("ethereum-mainnet",    "ethereum-mainnet:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",  "USD Coin",    "usdc",  "erc20",   "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",   true)
+DEFINE_UNIT ("ethereum-mainnet:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",      "USD Coin Int",             "usdci",       0,     "USDCI")
+DEFINE_UNIT ("ethereum-mainnet:0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",      "USD Coin",             "usdc",       6,     "USDC")
+
 DEFINE_ADDRESS_SCHEMES  ("ethereum-mainnet", WK_ADDRESS_SCHEME_NATIVE)
 DEFINE_MODES            ("ethereum-mainnet", WK_SYNC_MODE_API_ONLY)
 
