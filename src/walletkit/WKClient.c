@@ -205,6 +205,7 @@ wkClientP2PManagerSetNetworkReachable (WKClientP2PManager p2p,
 // MARK: Client QRY (QueRY)
 
 static void wkClientQRYRequestBlockNumber  (WKClientQRYManager qry);
+static void wkClientQRYRequestBlockNumberReceiveAddressSync  (WKClientQRYManager qry);
 static bool wkClientQRYRequestTransactionsOrTransfers (WKClientQRYManager qry,
                                                            WKClientCallbackType type,
                                                            OwnershipKept  BRSetOf(WKAddress) oldAddresses,
@@ -269,6 +270,17 @@ wkClientQRYManagerConnect (WKClientQRYManager qry) {
 
     // Start a sync immediately.
     wkClientQRYManagerTickTock (qry);
+}
+
+extern void
+wkClientQRYManagerReceiveAddressSync (WKClientQRYManager qry) { // ADDED
+    pthread_mutex_lock (&qry->lock);
+    qry->connected = true;
+    wkWalletManagerSetState (qry->manager, wkWalletManagerStateInit (WK_WALLET_MANAGER_STATE_SYNCING));
+    pthread_mutex_unlock (&qry->lock);
+
+    // Start a sync immediately.
+    wkClientQRYManagerTickTockReceiveAddressSync (qry);
 }
 
 extern void
@@ -384,6 +396,28 @@ wkClientQRYManagerTickTock (WKClientQRYManager qry) {
     pthread_mutex_unlock (&qry->lock);
 }
 
+extern void
+wkClientQRYManagerTickTockReceiveAddressSync (WKClientQRYManager qry) { // ADDED
+    pthread_mutex_lock (&qry->lock);
+
+    // Only continue if connected
+    if (qry->connected) {
+        switch (qry->manager->syncMode) {
+            case WK_SYNC_MODE_API_ONLY:
+            case WK_SYNC_MODE_API_WITH_P2P_SEND:
+                // Alwwys get the current block
+                wkClientQRYRequestBlockNumberReceiveAddressSync (qry);
+                break;
+
+            case WK_SYNC_MODE_P2P_WITH_API_SYNC:
+            case WK_SYNC_MODE_P2P_ONLY:
+                break;
+        }
+    }
+
+    pthread_mutex_unlock (&qry->lock);
+}
+
 static void
 wkClientQRYRequestSync (WKClientQRYManager qry, bool needLock) {
     if (needLock) pthread_mutex_lock (&qry->lock);
@@ -417,6 +451,62 @@ wkClientQRYRequestSync (WKClientQRYManager qry, bool needLock) {
         // Get the addresses for the manager's wallet
         WKWallet wallet = wkWalletManagerGetWallet (qry->manager);
         BRSetOf(WKAddress) addresses = wkWalletGetAddressesForRecovery (wallet);
+        assert (0 != BRSetCount(addresses));
+
+        // We'll force the 'client' to return all transactions w/o regard to the `endBlockNumber`
+        // Doing this ensures that the initial 'full-sync' returns everything.  Thus there is no
+        // need to wait for a future 'tick tock' to get the recent and pending transactions'.  For
+        // BTC the future 'tick tock' is minutes away; which is a burden on Users as they wait.
+
+        wkClientQRYRequestTransactionsOrTransfers (qry,
+                                                       (WK_CLIENT_REQUEST_USE_TRANSFERS == qry->byType
+                                                        ? CLIENT_CALLBACK_REQUEST_TRANSFERS
+                                                        : CLIENT_CALLBACK_REQUEST_TRANSACTIONS),
+                                                       NULL,
+                                                       addresses,
+                                                       qry->sync.rid);
+
+        wkWalletGive (wallet);
+    }
+
+    if (needLock) pthread_mutex_unlock (&qry->lock);
+}
+
+static void
+wkClientQRYRequestReceiveAddressSync (WKClientQRYManager qry, bool needLock) {
+    if (needLock) pthread_mutex_lock (&qry->lock);
+
+    // If we've successfully completed a sync then update `begBlockNumber` which will always be
+    // `blockNumberOffset` prior to the `endBlockNumber`.  Using the offset, which is weeks prior,
+    // ensures that we don't miss a range of blocks in the {transfer,transaction} query.
+
+    if (qry->sync.completed && qry->sync.success) {
+
+        // Be careful to ensure that the `begBlockNumber` is not negative.
+        qry->sync.begBlockNumber = (qry->sync.endBlockNumber >= qry->blockNumberOffset
+                                    ? qry->sync.endBlockNumber - qry->blockNumberOffset
+                                    : 0);
+    }
+
+    // Whether or not we completed , update the `endBlockNumber` to the current block height.
+    qry->sync.endBlockNumber = MAX (wkClientQRYGetNetworkBlockHeight (qry),
+                                    qry->sync.begBlockNumber);
+
+    // We'll update transactions if there are more blocks to examine and if the prior sync
+    // completed (successfully or not).
+    if (qry->sync.completed && qry->sync.begBlockNumber != qry->sync.endBlockNumber) {
+
+        // Save the current requestId and mark the sync as completed successfully.
+        qry->sync.rid = qry->requestId++;
+
+        // Mark the sync as completed, unsucessfully (the initial state)
+        wkClientQRYManagerUpdateSync (qry, false, false, false);
+
+        // Get the addresses for the manager's wallet
+        WKWallet wallet = wkWalletManagerGetWallet (qry->manager);
+        WKAddress address = wkWalletGetAddress (wallet, qry->manager->addressScheme);
+        BRSetOf(WKAddress) addresses = wkAddressSetCreate (1);
+        BRSetAdd (addresses, address);
         assert (0 != BRSetCount(addresses));
 
         // We'll force the 'client' to return all transactions w/o regard to the `endBlockNumber`
@@ -580,9 +670,55 @@ wkClientHandleBlockNumber (OwnershipKept WKWalletManager manager,
 }
 
 static void
+wkClientHandleBlockNumberReceiveAddressSync (OwnershipKept WKWalletManager manager,
+                           OwnershipGiven WKClientCallbackState callbackState,
+                           WKBlockNumber blockNumber,
+                           char *blockHashString,
+                           OwnershipGiven WKClientError error) {
+
+    if (NULL == error) {
+        WKBlockNumber oldBlockNumber = wkNetworkGetHeight (manager->network);
+
+        if (oldBlockNumber != blockNumber) {
+            wkNetworkSetHeight (manager->network, blockNumber);
+
+            if (NULL != blockHashString && '\0' != blockHashString[0]) {
+                WKHash verifiedBlockHash = wkNetworkCreateHashFromString (manager->network, blockHashString);
+                wkNetworkSetVerifiedBlockHash (manager->network, verifiedBlockHash);
+                wkHashGive (verifiedBlockHash);
+            }
+
+            wkWalletManagerGenerateEvent (manager, (WKWalletManagerEvent) {
+                WK_WALLET_MANAGER_EVENT_BLOCK_HEIGHT_UPDATED,
+                { .blockHeight = blockNumber }
+            });
+        }
+
+        wkClientCallbackStateRelease (callbackState);
+        wkMemoryFree(blockHashString);
+    }
+
+    // After getting any block number, whether successful or not, do a sync.  The sync will be
+    // incremental or full - depending on where the last sync ended.
+    wkClientQRYRequestReceiveAddressSync (manager->qryManager, true);
+
+    wkWalletManagerAnnounceClientError (manager, error);
+}
+
+static void
 wkClientAnnounceBlockNumberDispatcher (BREventHandler ignore,
                                        WKClientAnnounceBlockNumberEvent *event) {
     wkClientHandleBlockNumber (event->manager,
+                               event->callbackState,
+                               event->blockNumber,
+                               event->blockHashString,
+                               event->error);
+}
+
+static void
+wkClientReceiveAddressSyncBlockNumberDispatcher (BREventHandler ignore,
+                                       WKClientAnnounceBlockNumberEvent *event) {
+    wkClientHandleBlockNumberReceiveAddressSync (event->manager,
                                event->callbackState,
                                event->blockNumber,
                                event->blockHashString,
@@ -601,6 +737,13 @@ BREventType handleClientAnnounceBlockNumberEventType = {
     sizeof (WKClientAnnounceBlockNumberEvent),
     (BREventDispatcher) wkClientAnnounceBlockNumberDispatcher,
     (BREventDestroyer) wkClientAnnounceBlockNumberDestroyer
+};
+
+BREventType handleClientReceiveAddressSyncBlockNumberEventType = {
+    "CWM: Handle Client Subscribe Block Number Event",
+    sizeof (WKClientAnnounceBlockNumberEvent),
+    (BREventDispatcher) wkClientReceiveAddressSyncBlockNumberDispatcher,
+    (BREventDestroyer)  wkClientAnnounceBlockNumberDestroyer
 };
 
 extern void
@@ -635,6 +778,38 @@ wkClientAnnounceBlockNumberFailure (OwnershipKept WKWalletManager cwm,
     eventHandlerSignalEvent (cwm->handler, (BREvent *) &event);
 }
 
+extern void
+wkClientReceiveAddressSyncBlockNumberSuccess (OwnershipKept WKWalletManager cwm,
+                                    OwnershipGiven WKClientCallbackState callbackState,
+                                    WKBlockNumber blockNumber,
+                                    const char *blockHashString) {
+    WKClientAnnounceBlockNumberEvent event =
+    { { NULL, &handleClientReceiveAddressSyncBlockNumberEventType },
+        wkWalletManagerTakeWeak(cwm),
+        callbackState,
+        blockNumber,
+        (NULL == blockHashString ? NULL : strdup (blockHashString)),
+        NULL
+    };
+
+    eventHandlerSignalEvent (cwm->handler, (BREvent *) &event);
+}
+
+extern void
+wkClientReceiveAddressSyncBlockNumberFailure (OwnershipKept WKWalletManager cwm,
+                                    OwnershipGiven WKClientCallbackState callbackState,
+                                    OwnershipGiven WKClientError error) {
+    WKClientAnnounceBlockNumberEvent event =
+    { { NULL, &handleClientReceiveAddressSyncBlockNumberEventType },
+        wkWalletManagerTakeWeak(cwm),
+        callbackState,
+        BLOCK_NUMBER_UNKNOWN,
+        NULL,
+        error };
+
+    eventHandlerSignalEvent (cwm->handler, (BREvent *) &event);
+}
+
 static void
 wkClientQRYRequestBlockNumber (WKClientQRYManager qry) {
     // Extract CWM, checking to make sure it still lives
@@ -645,6 +820,22 @@ wkClientQRYRequestBlockNumber (WKClientQRYManager qry) {
                                                                                  qry->requestId++);
 
     qry->client.funcGetBlockNumber (qry->client.context,
+                                    wkWalletManagerTake (cwm),
+                                    callbackState);
+
+    wkWalletManagerGive (cwm);
+}
+
+static void
+wkClientQRYRequestBlockNumberReceiveAddressSync (WKClientQRYManager qry) { // ADDED
+    // Extract CWM, checking to make sure it still lives
+    WKWalletManager cwm = wkWalletManagerTakeWeak(qry->manager);
+    if (NULL == cwm) return;
+
+    WKClientCallbackState callbackState = wkClientCallbackStateCreate (CLIENT_CALLBACK_REQUEST_BLOCK_NUMBER,
+                                                                                 qry->requestId++);
+
+    qry->client.funcGetBlockNumberReceiveAddressSync (qry->client.context,
                                     wkWalletManagerTake (cwm),
                                     callbackState);
 

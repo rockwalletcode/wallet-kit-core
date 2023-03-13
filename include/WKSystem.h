@@ -156,6 +156,9 @@ wkSystemCreateWalletManager (WKSystem system,
                              WKCurrency *currencies,
                              size_t currenciesCount);
 
+extern void wkSystemReceiveAddressSync (WKSystem system,
+                                WKWalletManager manager);
+
 /**
  * Start the system.
  *

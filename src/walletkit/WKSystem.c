@@ -534,6 +534,15 @@ wkSystemRemNetwork (WKSystem system,
     pthread_mutex_unlock (&system->lock);
 }
 
+private_extern void
+wkSystemStartReceiveAddressSync (WKSystem system,
+                              WKWalletManager manager) {
+    wkListenerGenerateSystemEvent (system->listener, system, (WKSystemEvent) {
+        WK_SYSTEM_EVENT_MANAGER_ADDED,
+        { .manager = wkWalletManagerTake (manager) }
+    });
+}
+
 // MARK: - System Wallet Managers
 
 static WKBoolean
@@ -702,6 +711,12 @@ wkSystemCreateWalletManager (WKSystem system,
     wkWalletManagerStart (manager);
 
     return manager;
+}
+
+extern void wkSystemReceiveAddressSync (WKSystem system,
+                                    WKWalletManager manager) {
+    wkSystemStartReceiveAddressSync (system,
+                            manager);
 }
 
 // MARK: - Currency

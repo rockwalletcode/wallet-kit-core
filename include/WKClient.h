@@ -104,6 +104,17 @@ wkClientAnnounceBlockNumberFailure (OwnershipKept WKWalletManager cwm,
                                     OwnershipGiven WKClientCallbackState callbackState,
                                     OwnershipGiven WKClientError error);
 
+extern void
+wkClientReceiveAddressSyncBlockNumberSuccess (OwnershipKept WKWalletManager cwm,
+                                    OwnershipGiven WKClientCallbackState callbackState,
+                                    WKBlockNumber blockNumber,
+                                    const char *verifiedBlockHash);
+
+extern void
+wkClientReceiveAddressSyncBlockNumberFailure (OwnershipKept WKWalletManager cwm,
+                                    OwnershipGiven WKClientCallbackState callbackState,
+                                    OwnershipGiven WKClientError error);
+
 // MARK: - Get Transactions
 
 /**
@@ -410,6 +421,7 @@ wkClientAnnounceCurrenciesFailure (WKSystem system,
 typedef struct {
     WKClientContext context;
     WKClientGetBlockNumberCallback  funcGetBlockNumber;
+    WKClientGetBlockNumberCallback  funcGetBlockNumberReceiveAddressSync;
     WKClientGetTransactionsCallback funcGetTransactions;
     WKClientGetTransfersCallback funcGetTransfers;
     WKClientSubmitTransactionCallback funcSubmitTransaction;

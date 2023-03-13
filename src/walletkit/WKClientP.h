@@ -387,10 +387,16 @@ extern void
 wkClientQRYManagerConnect (WKClientQRYManager qry);
 
 extern void
+wkClientQRYManagerReceiveAddressSync (WKClientQRYManager qry);
+
+extern void
 wkClientQRYManagerDisconnect (WKClientQRYManager qry);
 
 extern void
 wkClientQRYManagerTickTock (WKClientQRYManager qry);
+
+extern void
+wkClientQRYManagerTickTockReceiveAddressSync (WKClientQRYManager qry);
 
 extern void
 wkClientQRYEstimateTransferFee (WKClientQRYManager qry,
