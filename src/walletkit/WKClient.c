@@ -1090,7 +1090,7 @@ wkClientReceiveAddressSyncTransactionsSuccess (OwnershipKept WKWalletManager man
     array_add_array (eventBundles, bundles, bundlesCount);
 
     WKClientAnnounceTransactionsEvent event =
-    { { NULL, &handleClientAnnounceTransactionsEventType },
+    { { NULL, &handleClientReceiveAddressSyncTransactionsEventType },
         wkWalletManagerTakeWeak(manager),
         callbackState,
         eventBundles,
@@ -1104,7 +1104,7 @@ wkClientReceiveAddressSyncTransactionsFailure (OwnershipKept WKWalletManager man
                                      OwnershipGiven WKClientCallbackState callbackState,
                                      OwnershipGiven WKClientError error) {
     WKClientAnnounceTransactionsEvent event =
-    { { NULL, &handleClientAnnounceTransactionsEventType },
+    { { NULL, &handleClientReceiveAddressSyncTransactionsEventType },
         wkWalletManagerTakeWeak(manager),
         callbackState,
         NULL,
