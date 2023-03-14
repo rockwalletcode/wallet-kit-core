@@ -51,7 +51,7 @@
 // MARK: - BTC
 
 #define NETWORK_NAME    "Bitcoin"
-DEFINE_NETWORK (WK_NETWORK_TYPE_BTC,  "bitcoin-mainnet", NETWORK_NAME, "mainnet", true, 668821, 6, 10 * 60 * 2)
+DEFINE_NETWORK (WK_NETWORK_TYPE_BTC,  "bitcoin-mainnet", NETWORK_NAME, "mainnet", true, 668821, 6, 10 * 60)
 DEFINE_NETWORK_FEE_ESTIMATE ("bitcoin-mainnet", "18", "10m", 10 * 60 * 1000)
 DEFINE_CURRENCY ("bitcoin-mainnet",     "bitcoin-mainnet:__native__",   NETWORK_NAME,  WK_NETWORK_CURRENCY_BTC,  "native",   NULL,   true)
     DEFINE_UNIT ("bitcoin-mainnet:__native__",      "Satoshi",    "sat",      0,      "SAT")
