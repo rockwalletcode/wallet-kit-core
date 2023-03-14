@@ -274,10 +274,10 @@ wkClientQRYManagerConnect (WKClientQRYManager qry) {
 
 extern void
 wkClientQRYManagerReceiveAddressSync (WKClientQRYManager qry) { // ADDED
-//    pthread_mutex_lock (&qry->lock);
-//    qry->connected = true;
-//    wkWalletManagerSetState (qry->manager, wkWalletManagerStateInit (WK_WALLET_MANAGER_STATE_SYNCING));
-//    pthread_mutex_unlock (&qry->lock);
+    pthread_mutex_lock (&qry->lock);
+    qry->connected = true;
+    wkWalletManagerSetState (qry->manager, wkWalletManagerStateInit (WK_WALLET_MANAGER_STATE_SYNCING));
+    pthread_mutex_unlock (&qry->lock);
 
     // Start a sync immediately.
     wkClientQRYManagerTickTockReceiveAddressSync (qry);
@@ -500,7 +500,7 @@ wkClientQRYRequestReceiveAddressSync (WKClientQRYManager qry, bool needLock) {
         qry->sync.rid = qry->requestId++;
 
         // Mark the sync as completed, unsucessfully (the initial state)
-//        wkClientQRYManagerUpdateSync (qry, false, false, false);
+        wkClientQRYManagerUpdateSync (qry, false, false, false);
 
         // Get the addresses for the manager's wallet
         WKWallet wallet = wkWalletManagerGetWallet (qry->manager);
