@@ -172,6 +172,9 @@ extern void
 wkWalletManagerConnect (WKWalletManager cwm,
                         WKPeer peer);
 
+extern void
+wkWalletManagerReceiveAddressSync (WKWalletManager cwm);
+
 /**
  * Disconnect the wallet manager.
  */

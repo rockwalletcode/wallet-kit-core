@@ -745,7 +745,6 @@ wkWalletManagerConnect (WKWalletManager cwm,
         }
             
         case WK_WALLET_MANAGER_STATE_CONNECTED:
-            wkClientQRYManagerReceiveAddressSync (cwm->qryManager);
             break;
 
         case WK_WALLET_MANAGER_STATE_SYNCING:
@@ -761,6 +760,11 @@ wkWalletManagerConnect (WKWalletManager cwm,
         case WK_WALLET_MANAGER_STATE_DELETED:
             break;
     }
+}
+
+extern void
+wkWalletManagerReceiveAddressSync (WKWalletManager cwm) {
+    wkClientQRYManagerReceiveAddressSync (cwm->qryManager);
 }
 
 extern void
