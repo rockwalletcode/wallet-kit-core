@@ -700,7 +700,7 @@ wkClientHandleBlockNumberReceiveAddressSync (OwnershipKept WKWalletManager manag
 
     // After getting any block number, whether successful or not, do a sync.  The sync will be
     // incremental or full - depending on where the last sync ended.
-    wkClientQRYRequestReceiveAddressSync (manager->qryManager, true);
+//    wkClientQRYRequestReceiveAddressSync (manager->qryManager, true);
 
     wkWalletManagerAnnounceClientError (manager, error);
 }
@@ -718,11 +718,11 @@ wkClientAnnounceBlockNumberDispatcher (BREventHandler ignore,
 static void
 wkClientReceiveAddressSyncBlockNumberDispatcher (BREventHandler ignore,
                                        WKClientAnnounceBlockNumberEvent *event) {
-//    wkClientHandleBlockNumberReceiveAddressSync (event->manager,
-//                               event->callbackState,
-//                               event->blockNumber,
-//                               event->blockHashString,
-//                               event->error);
+    wkClientHandleBlockNumberReceiveAddressSync (event->manager,
+                               event->callbackState,
+                               event->blockNumber,
+                               event->blockHashString,
+                               event->error);
 }
 
 static void
