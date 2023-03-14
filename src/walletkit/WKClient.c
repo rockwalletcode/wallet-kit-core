@@ -718,11 +718,11 @@ wkClientAnnounceBlockNumberDispatcher (BREventHandler ignore,
 static void
 wkClientReceiveAddressSyncBlockNumberDispatcher (BREventHandler ignore,
                                        WKClientAnnounceBlockNumberEvent *event) {
-    wkClientHandleBlockNumberReceiveAddressSync (event->manager,
-                               event->callbackState,
-                               event->blockNumber,
-                               event->blockHashString,
-                               event->error);
+//    wkClientHandleBlockNumberReceiveAddressSync (event->manager,
+//                               event->callbackState,
+//                               event->blockNumber,
+//                               event->blockHashString,
+//                               event->error);
 }
 
 static void
@@ -740,7 +740,7 @@ BREventType handleClientAnnounceBlockNumberEventType = {
 };
 
 BREventType handleClientReceiveAddressSyncBlockNumberEventType = {
-    "CWM: Handle Client Subscribe Block Number Event",
+    "CWM: Handle Client Receive Address Sync Block Number Event",
     sizeof (WKClientAnnounceBlockNumberEvent),
     (BREventDispatcher) wkClientReceiveAddressSyncBlockNumberDispatcher,
     (BREventDestroyer)  wkClientAnnounceBlockNumberDestroyer
