@@ -500,15 +500,15 @@ wkClientQRYRequestReceiveAddressSync (WKClientQRYManager qry, bool needLock) {
         qry->sync.rid = qry->requestId++;
 
         // Mark the sync as completed, unsucessfully (the initial state)
-//        wkClientQRYManagerUpdateSync (qry, false, false, false);
-//
-//        // Get the addresses for the manager's wallet
+        wkClientQRYManagerUpdateSync (qry, false, false, false);
+
+        // Get the addresses for the manager's wallet
 //        WKWallet wallet = wkWalletManagerGetWallet (qry->manager);
 //        WKAddress address = wkWalletGetAddress (wallet, qry->manager->addressScheme);
 //        BRSetOf(WKAddress) addresses = wkAddressSetCreate (1);
 //        BRSetAdd (addresses, address);
 //        assert (0 != BRSetCount(addresses));
-//
+
 //        // We'll force the 'client' to return all transactions w/o regard to the `endBlockNumber`
 //        // Doing this ensures that the initial 'full-sync' returns everything.  Thus there is no
 //        // need to wait for a future 'tick tock' to get the recent and pending transactions'.  For
