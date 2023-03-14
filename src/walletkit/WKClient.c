@@ -1246,17 +1246,17 @@ wkClientQRYRequestTransactionsOrTransfersReceiveAddressSync (WKClientQRYManager 
     // If there are `addresses` then a reqeust is needed.
     bool needRequest = BRSetCount (addresses) > 0;
 
-//    if (needRequest) {
-//        // Get an array of the remaining, needed `addresses`
-//        BRArrayOf(char *) addressesEncoded = wkClientQRYGetAddresses (qry, addresses);
-//
-//        // Create a `calllbackState`; importantly, report `newAddress` as the accumulated addresses
-//        // that have been requested.  Note, this specific request will be for `addresses` only.
-//        // The elements in `newAddresses` are now owned by `callbackState`.
-//        WKClientCallbackState callbackState = wkClientCallbackStateCreateGetTrans (type,
-//                                                                                             newAddresses,
-//                                                                                             requestId);
-//
+    if (needRequest) {
+        // Get an array of the remaining, needed `addresses`
+        BRArrayOf(char *) addressesEncoded = wkClientQRYGetAddresses (qry, addresses);
+
+        // Create a `calllbackState`; importantly, report `newAddress` as the accumulated addresses
+        // that have been requested.  Note, this specific request will be for `addresses` only.
+        // The elements in `newAddresses` are now owned by `callbackState`.
+        WKClientCallbackState callbackState = wkClientCallbackStateCreateGetTrans (type,
+                                                                                             newAddresses,
+                                                                                             requestId);
+
 //        switch (type) {
 //            case CLIENT_CALLBACK_REQUEST_TRANSFERS:
 //                qry->client.funcGetTransfers (qry->client.context,
@@ -1289,12 +1289,12 @@ wkClientQRYRequestTransactionsOrTransfersReceiveAddressSync (WKClientQRYManager 
 //        wkClientQRYReleaseAddresses (addressesEncoded);
 //    }
 //    else {
-//        // If `newAddresses` ownership was not transfered to `callbackState`, then release everything.
+        // If `newAddresses` ownership was not transfered to `callbackState`, then release everything.
 //        wkAddressSetRelease (newAddresses);
-//    }
-//
-//    wkWalletManagerGive (manager);
-//    BRSetFree (addresses);
+    }
+
+    wkWalletManagerGive (manager);
+    BRSetFree (addresses);
 
     return needRequest;
 }
