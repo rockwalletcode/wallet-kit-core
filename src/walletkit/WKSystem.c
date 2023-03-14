@@ -399,6 +399,8 @@ wkSystemEventTypeString (WKSystemEventType type) {
         "WK_SYSTEM_EVENT_MANAGER_DELETED",
 
         "WK_SYSTEM_EVENT_DISCOVERED_NETWORKS",
+        
+        "WK_SYSTEM_EVENT_RECEIVE_ADDRESS_SYNC",
     };
     return names [type];
 }
