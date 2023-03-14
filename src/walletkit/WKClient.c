@@ -522,7 +522,7 @@ wkClientQRYRequestReceiveAddressSync (WKClientQRYManager qry, bool needLock) {
                                                        addresses,
                                                        qry->sync.rid);
 
-        wkWalletGive (wallet);
+//        wkWalletGive (wallet);
     }
 
     if (needLock) pthread_mutex_unlock (&qry->lock);
