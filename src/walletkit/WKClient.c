@@ -932,10 +932,95 @@ wkClientHandleTransactions (OwnershipKept WKWalletManager manager,
     wkWalletManagerAnnounceClientError (manager, error);
 }
 
+extern void
+wkClientHandleTransactionsReceiveAddressSync (OwnershipKept WKWalletManager manager,
+                            OwnershipGiven WKClientCallbackState callbackState,
+                            BRArrayOf (WKClientTransactionBundle) bundles,
+                            OwnershipGiven WKClientError error) {
+
+    WKClientQRYManager qry = manager->qryManager;
+
+    pthread_mutex_lock (&qry->lock);
+    bool matchedRids = (callbackState->rid == qry->sync.rid);
+    pthread_mutex_unlock (&qry->lock);
+
+    bool syncCompleted = false;
+    bool syncSuccess   = false;
+
+    // Process the results if the bundles are for our rid; otherwise simply discard;
+    if (matchedRids) {
+        if (NULL == error) {
+            size_t bundlesCount = array_count(bundles);
+
+            // Save the transaction bundles immediately
+            for (size_t index = 0; index < bundlesCount; index++)
+                wkWalletManagerSaveTransactionBundle(manager, bundles[index]);
+
+            // Sort bundles to have the lowest blocknumber first.  Use of `mergesort` is
+            // appropriate given that the bundles are likely already ordered.  This minimizes
+            // dependency resolution between later transactions depending on prior transactions.
+            //
+            // Seems that there may be duplicates in `bundles`; will be dealt with later
+
+            mergesort_brd (bundles, bundlesCount, sizeof (WKClientTransactionBundle),
+                           wkClientTransactionBundleCompareForSort);
+
+            // Recover transfers from each bundle
+            for (size_t index = 0; index < bundlesCount; index++)
+                wkWalletManagerRecoverTransfersFromTransactionBundle (manager, bundles[index]);
+
+            // The following assumes `bundles` has produced transfers which may have
+            // impacted the wallet's addresses.  Thus the recovery must be *serial w.r.t. the
+            // subsequent call to `wkClientQRYRequestTransactionsOrTransfers()`.
+
+//            WKWallet wallet = wkWalletManagerGetWallet(manager);
+//
+//            // We've completed a query for `oldAddresses`
+//            BRSetOf(WKAddress) oldAddresses = callbackState->u.getTransactions.addresses;
+//
+//            // We'll need another query if `newAddresses` is now larger then `oldAddresses`
+//            BRSetOf(WKAddress) newAddresses = wkWalletGetAddressesForRecovery (wallet);
+//
+//            // Make the actual request; if none is needed, then we are done
+//            if (!wkClientQRYRequestTransactionsOrTransfers (qry,
+//                                                            CLIENT_CALLBACK_REQUEST_TRANSACTIONS,
+//                                                            oldAddresses,
+//                                                            newAddresses,
+//                                                            callbackState->rid)) {
+//                syncCompleted = true;
+//                syncSuccess   = true;
+//            }
+//
+//            wkWalletGive (wallet);
+        }
+        else {
+            syncCompleted = true;
+            syncSuccess   = false;
+        }
+    }
+
+//    wkClientQRYManagerUpdateSync (qry, syncCompleted, syncSuccess, true);
+
+    if (NULL != bundles) array_free_all (bundles, wkClientTransactionBundleRelease);
+    wkClientCallbackStateRelease(callbackState);
+
+    wkWalletManagerAnnounceClientError (manager, error);
+}
+
+
 static void
 wkClientAnnounceTransactionsDispatcher (BREventHandler ignore,
                                             WKClientAnnounceTransactionsEvent *event) {
     wkClientHandleTransactions (event->manager,
+                                event->callbackState,
+                                event->bundles,
+                                event->error);
+}
+
+static void
+wkClientReceiveAddressSyncTransactionsDispatcher (BREventHandler ignore,
+                                            WKClientAnnounceTransactionsEvent *event) {
+    wkClientHandleTransactionsReceiveAddressSync (event->manager,
                                 event->callbackState,
                                 event->bundles,
                                 event->error);
@@ -976,6 +1061,46 @@ wkClientAnnounceTransactionsSuccess (OwnershipKept WKWalletManager manager,
 
 extern void
 wkClientAnnounceTransactionsFailure (OwnershipKept WKWalletManager manager,
+                                     OwnershipGiven WKClientCallbackState callbackState,
+                                     OwnershipGiven WKClientError error) {
+    WKClientAnnounceTransactionsEvent event =
+    { { NULL, &handleClientAnnounceTransactionsEventType },
+        wkWalletManagerTakeWeak(manager),
+        callbackState,
+        NULL,
+        error };
+
+    eventHandlerSignalEvent (manager->handler, (BREvent *) &event);
+}
+
+BREventType handleClientReceiveAddressSyncTransactionsEventType = {
+    "CWM: Handle Client ReceiveAddressSync Transactions Event",
+    sizeof (WKClientAnnounceTransactionsEvent),
+    (BREventDispatcher) wkClientReceiveAddressSyncTransactionsDispatcher,
+    (BREventDestroyer) wkClientAnnounceTransactionsDestroyer
+};
+
+extern void
+wkClientReceiveAddressSyncTransactionsSuccess (OwnershipKept WKWalletManager manager,
+                                     OwnershipGiven WKClientCallbackState callbackState,
+                                     WKClientTransactionBundle *bundles,  // given elements, not array
+                                     size_t bundlesCount) {
+    BRArrayOf (WKClientTransactionBundle) eventBundles;
+    array_new (eventBundles, bundlesCount);
+    array_add_array (eventBundles, bundles, bundlesCount);
+
+    WKClientAnnounceTransactionsEvent event =
+    { { NULL, &handleClientAnnounceTransactionsEventType },
+        wkWalletManagerTakeWeak(manager),
+        callbackState,
+        eventBundles,
+        NULL };
+
+    eventHandlerSignalEvent (manager->handler, (BREvent *) &event);
+}
+
+extern void
+wkClientReceiveAddressSyncTransactionsFailure (OwnershipKept WKWalletManager manager,
                                      OwnershipGiven WKClientCallbackState callbackState,
                                      OwnershipGiven WKClientError error) {
     WKClientAnnounceTransactionsEvent event =

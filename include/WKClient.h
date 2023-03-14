@@ -193,6 +193,17 @@ wkClientAnnounceTransactionsFailure (OwnershipKept WKWalletManager cwm,
                                      OwnershipGiven WKClientCallbackState callbackState,
                                      OwnershipGiven WKClientError error);
 
+extern void
+wkClientReceiveAddressSyncTransactionsSuccess (OwnershipKept WKWalletManager cwm,
+                                     OwnershipGiven WKClientCallbackState callbackState,
+                                     WKClientTransactionBundle *bundles,
+                                     size_t bundlesCount);
+
+extern void
+wkClientReceiveAddressSyncTransactionsFailure (OwnershipKept WKWalletManager cwm,
+                                     OwnershipGiven WKClientCallbackState callbackState,
+                                     OwnershipGiven WKClientError error);
+
 // MARK: - Get Transfers
 
 /**
