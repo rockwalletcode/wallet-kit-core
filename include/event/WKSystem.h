@@ -39,6 +39,8 @@ typedef enum {
     
     WK_SYSTEM_EVENT_DISCOVERED_NETWORKS,
     
+    WK_SYSTEM_EVENT_RECEIVE_ADDRESS_SYNC,
+    
 } WKSystemEventType;
 
 extern const char *
