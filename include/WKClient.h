@@ -423,6 +423,7 @@ typedef struct {
     WKClientGetBlockNumberCallback  funcGetBlockNumber;
     WKClientGetBlockNumberCallback  funcGetBlockNumberReceiveAddressSync;
     WKClientGetTransactionsCallback funcGetTransactions;
+    WKClientGetTransactionsCallback funcGetTransactionsReceiveAddressSync;
     WKClientGetTransfersCallback funcGetTransfers;
     WKClientSubmitTransactionCallback funcSubmitTransaction;
     WKClientEstimateTransactionFeeCallback funcEstimateTransactionFee;

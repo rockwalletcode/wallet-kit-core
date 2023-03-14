@@ -1257,40 +1257,40 @@ wkClientQRYRequestTransactionsOrTransfersReceiveAddressSync (WKClientQRYManager 
                                                                                              newAddresses,
                                                                                              requestId);
 
-//        switch (type) {
-//            case CLIENT_CALLBACK_REQUEST_TRANSFERS:
-//                qry->client.funcGetTransfers (qry->client.context,
-//                                              wkWalletManagerTake(manager),
-//                                              callbackState,
-//                                              (const char **) addressesEncoded,
-//                                              array_count(addressesEncoded),
-//                                              qry->sync.begBlockNumber,
-//                                              (qry->sync.unbounded
-//                                               ? BLOCK_HEIGHT_UNBOUND_VALUE
-//                                               : qry->sync.endBlockNumber));
-//                break;
-//
-//            case CLIENT_CALLBACK_REQUEST_TRANSACTIONS:
-//                qry->client.funcGetTransactions (qry->client.context,
-//                                                 wkWalletManagerTake(manager),
-//                                                 callbackState,
-//                                                 (const char **) addressesEncoded,
-//                                                 array_count(addressesEncoded),
-//                                                 qry->sync.begBlockNumber,
-//                                                 (qry->sync.unbounded
-//                                                  ? BLOCK_HEIGHT_UNBOUND_VALUE
-//                                                  : qry->sync.endBlockNumber));
-//                break;
-//
-//            default:
-//                assert (false);
-//        }
-//
-//        wkClientQRYReleaseAddresses (addressesEncoded);
-//    }
-//    else {
+        switch (type) {
+            case CLIENT_CALLBACK_REQUEST_TRANSFERS:
+                qry->client.funcGetTransfers (qry->client.context,
+                                              wkWalletManagerTake(manager),
+                                              callbackState,
+                                              (const char **) addressesEncoded,
+                                              array_count(addressesEncoded),
+                                              qry->sync.begBlockNumber,
+                                              (qry->sync.unbounded
+                                               ? BLOCK_HEIGHT_UNBOUND_VALUE
+                                               : qry->sync.endBlockNumber));
+                break;
+
+            case CLIENT_CALLBACK_REQUEST_TRANSACTIONS:
+                qry->client.funcGetTransactionsReceiveAddressSync (qry->client.context,
+                                                 wkWalletManagerTake(manager),
+                                                 callbackState,
+                                                 (const char **) addressesEncoded,
+                                                 array_count(addressesEncoded),
+                                                 qry->sync.begBlockNumber,
+                                                 (qry->sync.unbounded
+                                                  ? BLOCK_HEIGHT_UNBOUND_VALUE
+                                                  : qry->sync.endBlockNumber));
+                break;
+
+            default:
+                assert (false);
+        }
+
+        wkClientQRYReleaseAddresses (addressesEncoded);
+    }
+    else {
         // If `newAddresses` ownership was not transfered to `callbackState`, then release everything.
-//        wkAddressSetRelease (newAddresses);
+        wkAddressSetRelease (newAddresses);
     }
 
     wkWalletManagerGive (manager);
