@@ -53,7 +53,7 @@
 // Additionally sampling at 1 minutes for a blockchain like BTC, where blocks average 10 minutes,
 // is not burdensome on the network data rates.
 //
-#define CWM_MAXIMUM_SAMPLING_PERIOD_IN_MILLISECONDS   (1 * 60 * 1000)    //  1 minute
+#define CWM_MAXIMUM_SAMPLING_PERIOD_IN_MILLISECONDS   (2 * 60 * 1000)    //  1 minute
 #define CWM_MINIMUM_SAMPLING_PERIOD_IN_MILLISECONDS   (    10 * 1000)    // 10 seconds
 
 static unsigned int
