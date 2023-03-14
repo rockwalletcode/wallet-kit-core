@@ -211,6 +211,11 @@ static bool wkClientQRYRequestTransactionsOrTransfers (WKClientQRYManager qry,
                                                            OwnershipKept  BRSetOf(WKAddress) oldAddresses,
                                                            OwnershipGiven BRSetOf(WKAddress) newAddresses,
                                                            size_t requestId);
+static bool wkClientQRYRequestTransactionsOrTransfersReceiveAddressSync (WKClientQRYManager qry,
+                                                           WKClientCallbackType type,
+                                                           OwnershipKept  BRSetOf(WKAddress) oldAddresses,
+                                                           OwnershipGiven BRSetOf(WKAddress) newAddresses,
+                                                           size_t requestId);
 static void wkClientQRYSubmitTransfer      (WKClientQRYManager qry,
                                                 WKWallet   wallet,
                                                 WKTransfer transfer);
@@ -514,7 +519,7 @@ wkClientQRYRequestReceiveAddressSync (WKClientQRYManager qry, bool needLock) {
         // need to wait for a future 'tick tock' to get the recent and pending transactions'.  For
         // BTC the future 'tick tock' is minutes away; which is a burden on Users as they wait.
 
-        wkClientQRYRequestTransactionsOrTransfers (qry,
+        wkClientQRYRequestTransactionsOrTransfersReceiveAddressSync (qry,
                                                        (WK_CLIENT_REQUEST_USE_TRANSFERS == qry->byType
                                                         ? CLIENT_CALLBACK_REQUEST_TRANSFERS
                                                         : CLIENT_CALLBACK_REQUEST_TRANSACTIONS),
@@ -522,7 +527,7 @@ wkClientQRYRequestReceiveAddressSync (WKClientQRYManager qry, bool needLock) {
                                                        addresses,
                                                        qry->sync.rid);
 
-//        wkWalletGive (wallet);
+        wkWalletGive (wallet);
     }
 
     if (needLock) pthread_mutex_unlock (&qry->lock);
@@ -1218,6 +1223,81 @@ wkClientQRYRequestTransactionsOrTransfers (WKClientQRYManager qry,
     return needRequest;
 }
 
+static bool
+wkClientQRYRequestTransactionsOrTransfersReceiveAddressSync (WKClientQRYManager qry,
+                                               WKClientCallbackType type,
+                                               OwnershipKept  BRSetOf(WKAddress) oldAddresses,
+                                               OwnershipGiven BRSetOf(WKAddress) newAddresses,
+                                               size_t requestId) {
+
+    WKWalletManager manager = wkWalletManagerTakeWeak(qry->manager);
+    if (NULL == manager) {
+        wkAddressSetRelease(newAddresses);
+        return false;
+    }
+
+    // Determine the set of addresses needed as `newAddresses - oldAddresses`.  The elements in
+    // `addresses` ARE NOT owned by `addresses`; they remain owned by `newAddresses`
+    BRSetOf(WKAddress) addresses = BRSetCopy (newAddresses, NULL);
+
+    if (NULL != oldAddresses)
+        BRSetMinus (addresses, oldAddresses);
+
+    // If there are `addresses` then a reqeust is needed.
+    bool needRequest = BRSetCount (addresses) > 0;
+
+//    if (needRequest) {
+//        // Get an array of the remaining, needed `addresses`
+//        BRArrayOf(char *) addressesEncoded = wkClientQRYGetAddresses (qry, addresses);
+//
+//        // Create a `calllbackState`; importantly, report `newAddress` as the accumulated addresses
+//        // that have been requested.  Note, this specific request will be for `addresses` only.
+//        // The elements in `newAddresses` are now owned by `callbackState`.
+//        WKClientCallbackState callbackState = wkClientCallbackStateCreateGetTrans (type,
+//                                                                                             newAddresses,
+//                                                                                             requestId);
+//
+//        switch (type) {
+//            case CLIENT_CALLBACK_REQUEST_TRANSFERS:
+//                qry->client.funcGetTransfers (qry->client.context,
+//                                              wkWalletManagerTake(manager),
+//                                              callbackState,
+//                                              (const char **) addressesEncoded,
+//                                              array_count(addressesEncoded),
+//                                              qry->sync.begBlockNumber,
+//                                              (qry->sync.unbounded
+//                                               ? BLOCK_HEIGHT_UNBOUND_VALUE
+//                                               : qry->sync.endBlockNumber));
+//                break;
+//
+//            case CLIENT_CALLBACK_REQUEST_TRANSACTIONS:
+//                qry->client.funcGetTransactions (qry->client.context,
+//                                                 wkWalletManagerTake(manager),
+//                                                 callbackState,
+//                                                 (const char **) addressesEncoded,
+//                                                 array_count(addressesEncoded),
+//                                                 qry->sync.begBlockNumber,
+//                                                 (qry->sync.unbounded
+//                                                  ? BLOCK_HEIGHT_UNBOUND_VALUE
+//                                                  : qry->sync.endBlockNumber));
+//                break;
+//
+//            default:
+//                assert (false);
+//        }
+//
+//        wkClientQRYReleaseAddresses (addressesEncoded);
+//    }
+//    else {
+//        // If `newAddresses` ownership was not transfered to `callbackState`, then release everything.
+//        wkAddressSetRelease (newAddresses);
+//    }
+//
+//    wkWalletManagerGive (manager);
+//    BRSetFree (addresses);
+
+    return needRequest;
+}
 
 // MARK: Announce Submit Transfer
 
