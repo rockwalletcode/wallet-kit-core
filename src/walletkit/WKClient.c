@@ -509,20 +509,20 @@ wkClientQRYRequestReceiveAddressSync (WKClientQRYManager qry, bool needLock) {
         BRSetAdd (addresses, address);
         assert (0 != BRSetCount(addresses));
 
-//        // We'll force the 'client' to return all transactions w/o regard to the `endBlockNumber`
-//        // Doing this ensures that the initial 'full-sync' returns everything.  Thus there is no
-//        // need to wait for a future 'tick tock' to get the recent and pending transactions'.  For
-//        // BTC the future 'tick tock' is minutes away; which is a burden on Users as they wait.
-//
-//        wkClientQRYRequestTransactionsOrTransfers (qry,
-//                                                       (WK_CLIENT_REQUEST_USE_TRANSFERS == qry->byType
-//                                                        ? CLIENT_CALLBACK_REQUEST_TRANSFERS
-//                                                        : CLIENT_CALLBACK_REQUEST_TRANSACTIONS),
-//                                                       NULL,
-//                                                       addresses,
-//                                                       qry->sync.rid);
-//
-//        wkWalletGive (wallet);
+        // We'll force the 'client' to return all transactions w/o regard to the `endBlockNumber`
+        // Doing this ensures that the initial 'full-sync' returns everything.  Thus there is no
+        // need to wait for a future 'tick tock' to get the recent and pending transactions'.  For
+        // BTC the future 'tick tock' is minutes away; which is a burden on Users as they wait.
+
+        wkClientQRYRequestTransactionsOrTransfers (qry,
+                                                       (WK_CLIENT_REQUEST_USE_TRANSFERS == qry->byType
+                                                        ? CLIENT_CALLBACK_REQUEST_TRANSFERS
+                                                        : CLIENT_CALLBACK_REQUEST_TRANSACTIONS),
+                                                       NULL,
+                                                       addresses,
+                                                       qry->sync.rid);
+
+        wkWalletGive (wallet);
     }
 
     if (needLock) pthread_mutex_unlock (&qry->lock);
