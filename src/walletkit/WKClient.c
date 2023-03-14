@@ -494,12 +494,12 @@ wkClientQRYRequestReceiveAddressSync (WKClientQRYManager qry, bool needLock) {
 
     // We'll update transactions if there are more blocks to examine and if the prior sync
     // completed (successfully or not).
-//    if (qry->sync.completed && qry->sync.begBlockNumber != qry->sync.endBlockNumber) {
-//
-//        // Save the current requestId and mark the sync as completed successfully.
-//        qry->sync.rid = qry->requestId++;
-//
-//        // Mark the sync as completed, unsucessfully (the initial state)
+    if (qry->sync.completed && qry->sync.begBlockNumber != qry->sync.endBlockNumber) {
+
+        // Save the current requestId and mark the sync as completed successfully.
+        qry->sync.rid = qry->requestId++;
+
+        // Mark the sync as completed, unsucessfully (the initial state)
 //        wkClientQRYManagerUpdateSync (qry, false, false, false);
 //
 //        // Get the addresses for the manager's wallet
@@ -523,7 +523,7 @@ wkClientQRYRequestReceiveAddressSync (WKClientQRYManager qry, bool needLock) {
 //                                                       qry->sync.rid);
 //
 //        wkWalletGive (wallet);
-//    }
+    }
 
     if (needLock) pthread_mutex_unlock (&qry->lock);
 }
