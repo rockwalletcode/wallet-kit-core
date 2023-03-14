@@ -540,7 +540,7 @@ private_extern void
 wkSystemStartReceiveAddressSync (WKSystem system,
                               WKWalletManager manager) {
     wkListenerGenerateSystemEvent (system->listener, system, (WKSystemEvent) {
-        WK_SYSTEM_EVENT_MANAGER_ADDED,
+        WK_SYSTEM_EVENT_RECEIVE_ADDRESS_SYNC,
         { .manager = wkWalletManagerTake (manager) }
     });
 }
